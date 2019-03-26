@@ -77,16 +77,17 @@ public class DFSCommand
     
     static public void main(String args[]) throws Exception
     {
-        DFSCommand dfsCommand=new DFSCommand(2000, 2001);
-//        if (args.length < 1 ) {
-//            throw new IllegalArgumentException("Parameter: <port> <portToJoin>");
-//        }
-//        if (args.length > 1 ) {
-//            DFSCommand dfsCommand=new DFSCommand(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-//        }
-//        else
-//        {
-//            DFSCommand dfsCommand=new DFSCommand( Integer.parseInt(args[0]), 0);
-//        }
+        DFSCommand dfsCommand;
+        DFSCommand dfsCommandChildThing;
+        if (args.length == 0) {
+          dfsCommand = new DFSCommand(2000, 0);
+        } 
+       else if (args.length > 1 ) {
+           dfsCommand=new DFSCommand(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+       }
+       else
+       {
+           dfsCommand=new DFSCommand( Integer.parseInt(args[0]), 0);
+       }
      } 
 }
