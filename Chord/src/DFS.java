@@ -369,7 +369,8 @@ public class DFS
 
                 // Delete physical pages for file from chord
                 for(int j = 0; j < metadata.file.get(i).pages.size(); j++){
-                    chord.delete(metadata.file.get(i).pages.get(j).guid);
+                    ChordMessageInterface peer = chord.locateSuccessor(metadata.file.get(i).pages.get(j).getGUID());        // Locate node where page is held
+                    peer.delete(metadata.file.get(i).pages.get(j).getGUID());                       // Delete page
                 }
 
                 // Remove file from metadata
@@ -399,11 +400,15 @@ public class DFS
         // Find file
         boolean find = false;
         FileJson myFile = null;
+        int fileIndex = 0;
         for(int i = 0; i < metadata.file.size(); i++){
             if(metadata.file.get(i).name == fileName){
+                fileIndex = i;
+                metadata.file.get(i).incrementRef(pageNumber);                              // Increment file and page refCount
                 myFile = metadata.file.get(i);
                 metadata.file.get(i).readTS = date.getTime();                               // Update file read timestamp
                 metadata.file.get(i).pages.get(pageNumber).readTS = date.getTime();         // Update page read timestamp
+                writeMetaData(metadata);                                                    // Update metadata with refCount and timestamps
                 find = true;
                 break;
             }
@@ -412,7 +417,8 @@ public class DFS
         // If file was found return page, else return null
         if(find){
             PagesJson myPage = myFile.pages.get(pageNumber);
-            writeMetaData(metadata);                                                        // Update metadata for read
+            metadata.file.get(fileIndex).decrementRef(pageNumber);                          // Decrement refCount
+            writeMetaData(metadata);                                                        // Update metadata for read and refCount
             return chord.get(myPage.guid);
         }else return null;
     }
@@ -443,12 +449,16 @@ public class DFS
         boolean find = false;
         FileJson myFile = null;
         int tailPage = 0;
+        int fileIndex = 0;
         for(int i = 0; i < metadata.file.size(); i++){
             if(metadata.file.get(i).name == fileName){
+                fileIndex = i;
                 myFile = metadata.file.get(i);
                 tailPage = myFile.pages.size()-1;
                 metadata.file.get(i).readTS = date.getTime();                               // Update file read timestamp
                 metadata.file.get(i).pages.get(tailPage).guid = date.getTime();             // Update page read timestamp
+                metadata.file.get(i).incrementRef(tailPage);                                // Increment file and page referenceCount
+                writeMetaData(metadata);                                                    // Update metadata with new RefCount and timestamps
                 find = true;
                 break;
             }
@@ -457,7 +467,8 @@ public class DFS
         // If file was found return page, else return null
         if(find){
             PagesJson myPage = myFile.pages.get(tailPage);
-            writeMetaData(metadata);                                                        // Update metadata for read
+            metadata.file.get(fileIndex).decrementRef(tailPage);                            // Decrement reference count
+            writeMetaData(metadata);                                                        // Update metadata for read and refCount
             return chord.get(myPage.guid);
         }else return null;
     }
@@ -476,9 +487,13 @@ public class DFS
         // Find file
         boolean find = false;
         int newPageIndex = 0;
+        int fileIndex = 0;
         Long pageGUID = Long.valueOf(0);
         for(int i = 0; i < metadata.file.size(); i++){
             if(metadata.file.get(i).name == fileName){
+                fileIndex = i;
+                metadata.file.get(i).incrementRef();                                            // Increment file refCount
+                writeMetaData(metadata);                                                        // Write updated metadata
                 newPageIndex = metadata.file.get(i).pages.size();
                 pageGUID = md5(fileName+newPageIndex);
                 metadata.file.get(i).pages.add(new PagesJson(pageGUID, (long) data.total));     // Add new page entry to file
@@ -491,8 +506,9 @@ public class DFS
         // If file was found append data and add to chord, else return
         if(find){
             //Find closest successor node and place data
+            metadata.file.get(fileIndex).decrementRef();                                    // Decrement refcount
             ChordMessageInterface peer = chord.locateSuccessor(pageGUID);
-            writeMetaData(metadata);                                                        // Update metadata for write
+            writeMetaData(metadata);                                                        // Update metadata for write and refCount
             peer.put(pageGUID, data);
         }else return;
     }
