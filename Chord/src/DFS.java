@@ -143,6 +143,11 @@ public class DFS
             this.referenceCount--;
             this.pages.get(pageIndex).referenceCount--;
         }
+
+        public void addPage(PagesJson p, Long size){
+            this.pages.add(p);
+            this.size+= size;
+        }
     };
     
     public class FilesJson 
@@ -492,7 +497,7 @@ public class DFS
                 writeMetaData(metadata);                                                        // Write updated metadata
                 newPageIndex = metadata.file.get(i).pages.size();
                 pageGUID = md5(fileName+newPageIndex);
-                metadata.file.get(i).pages.add(new PagesJson(pageGUID, (long) data.total));     // Add new page entry to file
+                metadata.file.get(i).addPage(new PagesJson(pageGUID, (long) data.total), (long) data.total);     // Add new page entry to file and update filesize
                 metadata.file.get(i).writeTS = date.getTime();              // Update file write timestamp
                 find = true;
                 break;
