@@ -1,5 +1,6 @@
 
 import java.io.*;
+import java.rmi.RemoteException;
 
 
 public class DFSCommand
@@ -12,7 +13,7 @@ public class DFSCommand
         if (portToJoin > 0)
         {
             System.out.println("Joining "+ portToJoin);
-            dfs.join("127.0.0.1", portToJoin);            
+            dfs.join("127.0.0.1", portToJoin);
         }
         
         BufferedReader buffer=new BufferedReader(new InputStreamReader(System.in));
@@ -37,35 +38,35 @@ public class DFSCommand
             // join, ls, touch, delete, read, tail, head, append, move
             if (result[0].equals("ls"))
             {
-                dfs.
+                System.out.println(dfs.lists());
             }
             if (result[0].equals("touch"))
             {
-
+                dfs.create(result[1]);                  // User must specify file name
             }
             if (result[0].equals("delete"))
             {
-
+                dfs.delete(result[1]);                  // User must specify file name
             }
             if (result[0].equals("read"))
             {
-
+                dfs.read(result[1], Integer.parseInt(result[2]));   // User must specify file name and page number
             }
             if (result[0].equals("tail"))
             {
-
+                dfs.tail(result[1]);                    // User must specify file name
             }
             if (result[0].equals("head"))
             {
-
+                dfs.head(result[1]);                    // User must specify file name
             }
             if (result[0].equals("append"))
             {
-
+                dfs.append(result[1], new RemoteInputFileStream(result[2]));        // User must specify filename they want to append data to and filepath of the data to be appended
             }
             if (result[0].equals("move"))
             {
-
+                dfs.move(result[1], result[2]);         // User must specify file to be edited and its new name
             }
 
             line=buffer.readLine();  

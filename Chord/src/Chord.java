@@ -18,7 +18,7 @@ import java.io.*;
  * It implements the ChordMessageInterface
  *
  */
-public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordMessageInterface
+public class Chord extends UnicastRemoteObject implements ChordMessageInterface
 {
     // Numbers of fingers
     public static final int M = 2;

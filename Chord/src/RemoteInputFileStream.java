@@ -1,12 +1,12 @@
 /**
-* RemoteInputFileStream Implements an Input Stream for big
-* files. It creates a server and return the address
-* The client must call connect() before reading
-*
-* @author  Oscar Morales-Ponce
-* @version 0.15
-* @since   03-3-2019
-*/
+ * RemoteInputFileStream Implements an Input Stream for big
+ * files. It creates a server and return the address
+ * The client must call connect() before reading
+ *
+ * @author  Oscar Morales-Ponce
+ * @version 0.15
+ * @since   03-3-2019
+ */
 
 import java.io.*;
 import java.nio.*;
@@ -33,14 +33,14 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
      * while buf is in use
      */
     protected byte nextBuf[];
-     /**
+    /**
      * It is used to read the buffer
      */
     protected int fragment = 0;
 
-/**
- * Connects to the server to provide the file
- */
+    /**
+     * Connects to the server to provide the file
+     */
     public void connect()
     {
         this.buf  = new byte[BUFFER_LENGTH];
@@ -66,9 +66,9 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
 
 
 
-/**
- * Starts a server to provide the file
- */
+    /**
+     * Starts a server to provide the file
+     */
     public  RemoteInputFileStream(String pathName, boolean deleteAfter) throws FileNotFoundException, IOException    {
         File file = new File(pathName);
         total = (int)file.length();
@@ -80,7 +80,7 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
             port = serverSocket.getLocalPort();
             IP = serverSocket.getInetAddress();
 
-             new Thread() {
+            new Thread() {
                 public void run() {
                     try {
                         Socket socket = serverSocket.accept();
@@ -91,7 +91,7 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
                         is.close();
                         if (deleteAfter)
                         {
-                          file.delete();
+                            file.delete();
                         }
                     } catch(Exception v) {
                         System.out.println(v);
@@ -105,13 +105,13 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
 
     public  RemoteInputFileStream(String pathName) throws FileNotFoundException, IOException
     {
-       this(pathName, false);
+        this(pathName, false);
     }
 
-     /**
+    /**
      * getNextBuff reads the buffer. It gets the data using
      * the remote method getSongChunk
-    */
+     */
     protected void getBuff(int fragment) throws IOException
     {
         new Thread()
@@ -119,9 +119,10 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
             public void run() {
                 try
                 {
+                    Thread.sleep(500);
                     input.read(nextBuf);
                     sem.release();
-       //             System.out.println("Read buffer");
+                    //             System.out.println("Read buffer");
                 }
                 catch (Exception e)
                 {
@@ -130,73 +131,73 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
             }
         }.start();
 
-     }
+    }
 
 
 
-/**
+    /**
      * Reads the next byte of data from the input stream.
-    */
+     */
     @Override
     public synchronized int read() throws IOException {
 
 
-	  if (pos >= total)
-	  {
+        if (pos >= total)
+        {
             pos = 0;
             return -1;
-	  }
-	  int posmod = pos % BUFFER_LENGTH;
-	  if (posmod == 0)
-	  {
-          try
-          {
-            sem.acquire();
-          }catch (InterruptedException exc)
-          {
+        }
+        int posmod = pos % BUFFER_LENGTH;
+        if (posmod == 0)
+        {
+            try
+            {
+                sem.acquire();
+            }catch (InterruptedException exc)
+            {
                 System.out.println(exc);
-          }
-	      for (int i=0; i< BUFFER_LENGTH; i++)
-		      buf[i] = nextBuf[i];
+            }
+            for (int i=0; i< BUFFER_LENGTH; i++)
+                buf[i] = nextBuf[i];
 
-	      getBuff(fragment);
-	      fragment++;
-	  }
-	  int p = pos % BUFFER_LENGTH;
-	  pos++;
-      return buf[p] & 0xff;
+            getBuff(fragment);
+            fragment++;
+        }
+        int p = pos % BUFFER_LENGTH;
+        pos++;
+        return buf[p] & 0xff;
     }
 
     /**
      * Reads some number of bytes from the input stream and stores them
      * into the buffer array b.
-    */
+     */
     @Override
     public synchronized int read(byte b[], int off, int len)  throws IOException{
         if (b == null) {
             throw new NullPointerException();
-	    } else if (off < 0 || len < 0 || len > b.length - off) {
+        } else if (off < 0 || len < 0 || len > b.length - off) {
             throw new IndexOutOfBoundsException();
-	    }
+        }
 
-	    if (pos >= total) {
-     	    return -1;
-	    }
-	    int avail = total - pos;
-	    if (len > avail) {
-		  len = avail;
-	    }
-	    if (len <= 0) {
-		  return 0;
-	    }
-	    for (int i = off; i< off+len;  i++)
-		    b[i] = (byte)read();
-	    return len;
+        if (pos >= total) {
+            return -1;
+        }
+        int avail = total - pos;
+        if (len > avail) {
+            len = avail;
+        }
+        if (len <= 0) {
+            return 0;
+        }
+        for (int i = off; i< off+len;  i++)
+            b[i] = (byte)read();
+        return len;
     }
 
     public int available() throws IOException
     {
-	return total - pos;
+        return total - pos;
     }
 
 
