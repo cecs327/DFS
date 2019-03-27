@@ -1,6 +1,5 @@
 
 import java.io.*;
-import java.rmi.RemoteException;
 
 
 public class DFSCommand
@@ -13,7 +12,7 @@ public class DFSCommand
         if (portToJoin > 0)
         {
             System.out.println("Joining "+ portToJoin);
-            dfs.join("127.0.0.1", portToJoin);
+            dfs.join("127.0.0.1", portToJoin);            
         }
         
         BufferedReader buffer=new BufferedReader(new InputStreamReader(System.in));
@@ -38,35 +37,35 @@ public class DFSCommand
             // join, ls, touch, delete, read, tail, head, append, move
             if (result[0].equals("ls"))
             {
-                dfs.lists();
+                dfs.
             }
             if (result[0].equals("touch"))
             {
-                dfs.create(result[1]);                  // User must specify file name
+
             }
             if (result[0].equals("delete"))
             {
-                dfs.delete(result[1]);                  // User must specify file name
+
             }
             if (result[0].equals("read"))
             {
-                dfs.read(result[1], Integer.parseInt(result[2]));   // User must specify file name and page number
+
             }
             if (result[0].equals("tail"))
             {
-                dfs.tail(result[1]);                    // User must specify file name
+
             }
             if (result[0].equals("head"))
             {
-                dfs.head(result[1]);                    // User must specify file name
+
             }
             if (result[0].equals("append"))
             {
-                dfs.append(result[1], new RemoteInputFileStream(result[2]));        // User must specify filename they want to append data to and filepath of the data to be appended
+
             }
             if (result[0].equals("move"))
             {
-                dfs.move(result[1], result[2]);         // User must specify file to be edited and its new name
+
             }
 
             line=buffer.readLine();  
@@ -77,17 +76,16 @@ public class DFSCommand
     
     static public void main(String args[]) throws Exception
     {
-        DFSCommand dfsCommand;
-        DFSCommand dfsCommandChildThing;
-        if (args.length == 0) {
-          dfsCommand = new DFSCommand(2000, 0);
-        } 
-       else if (args.length > 1 ) {
-           dfsCommand=new DFSCommand(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-       }
-       else
-       {
-           dfsCommand=new DFSCommand( Integer.parseInt(args[0]), 0);
-       }
+        DFSCommand dfsCommand=new DFSCommand(2000, 2001);
+//        if (args.length < 1 ) {
+//            throw new IllegalArgumentException("Parameter: <port> <portToJoin>");
+//        }
+//        if (args.length > 1 ) {
+//            DFSCommand dfsCommand=new DFSCommand(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+//        }
+//        else
+//        {
+//            DFSCommand dfsCommand=new DFSCommand( Integer.parseInt(args[0]), 0);
+//        }
      } 
 }
