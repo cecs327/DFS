@@ -366,7 +366,7 @@ public class DFS
         // Find and delete file
         boolean find = false;
         for(int i = 0; i < metadata.file.size(); i++){
-            if(metadata.file.get(i).name == fileName){
+            if(metadata.file.get(i).getName().equals(fileName)){
 
                 // Delete physical pages for file from chord
                 for(int j = 0; j < metadata.file.get(i).pages.size(); j++){
@@ -403,7 +403,7 @@ public class DFS
         FileJson myFile = null;
         int fileIndex = 0;
         for(int i = 0; i < metadata.file.size(); i++){
-            if(metadata.file.get(i).name == fileName){
+            if(metadata.file.get(i).getName().equals(fileName)){
                 fileIndex = i;
                 metadata.file.get(i).incrementRef(pageNumber);                              // Increment file and page refCount
                 myFile = metadata.file.get(i);
@@ -452,7 +452,7 @@ public class DFS
         int tailPage = 0;
         int fileIndex = 0;
         for(int i = 0; i < metadata.file.size(); i++){
-            if(metadata.file.get(i).name == fileName){
+            if(metadata.file.get(i).getName().equals(fileName)){
                 fileIndex = i;
                 myFile = metadata.file.get(i);
                 tailPage = myFile.pages.size()-1;
@@ -491,7 +491,7 @@ public class DFS
         int fileIndex = 0;
         Long pageGUID = Long.valueOf(0);
         for(int i = 0; i < metadata.file.size(); i++){
-            if(metadata.file.get(i).name == fileName){
+            if(metadata.file.get(i).getName().equals(fileName)){
                 fileIndex = i;
                 metadata.file.get(i).incrementRef();                                            // Increment file refCount
                 writeMetaData(metadata);                                                        // Write updated metadata
