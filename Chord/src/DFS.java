@@ -247,7 +247,7 @@ public class DFS
 
         // Try to read metadata if it does not exist create a new physical file for it
         try {
-            System.out.println("Read metadata starting");
+            //System.out.println("Read metadata starting");
             ChordMessageInterface peer = chord.locateSuccessor(guid);
             RemoteInputFileStream metadataraw = peer.get(guid);
             metadataraw.connect();
@@ -297,9 +297,9 @@ public class DFS
         FilesJson metadata = readMetaData();
 
         // Find and edit file
-        boolean find = false;
         for(int i = 0; i < metadata.file.size(); i++){
-            if(metadata.file.get(i).name == oldName){
+            if(metadata.file.get(i).getName().equals(oldName)){
+                System.out.println("Move file found!\n");
                 metadata.file.get(i).incrementRef();                    // Increment referenceCount
                 writeMetaData(metadata);                                // Update metadata with new reference count
                 metadata.file.get(i).name = newName;                    // Change old file name to newName
@@ -309,7 +309,6 @@ public class DFS
                 break;
             }
         }
-
     }
 
   
