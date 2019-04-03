@@ -51,7 +51,8 @@ public class Chord extends UnicastRemoteObject implements ChordMessageInterface 
     public Chord(int port, long guid) throws RemoteException {
         int j;
         // Initialize the variables
-        prefix = ".\\" + guid + "\\repository\\";      // Local repository for each peer
+//        prefix = ".\\" + guid + "\\repository\\";      // Local repository for each peer
+        prefix = "." + File.separator + guid + File.separator + "repository" + File.separator;      // Local repository for each peer
         finger = new ChordMessageInterface[M];
         for (j = 0; j < M; j++) {
             finger[j] = null;

@@ -63,6 +63,8 @@ public class DFSCommand {
 
     static public void main(String args[]) throws Exception {
         DFSCommand dfsCommand = new DFSCommand(2000, 2001);
+
+
 //        if (args.length < 1 ) {
 //            throw new IllegalArgumentException("Parameter: <port> <portToJoin>");
 //        }

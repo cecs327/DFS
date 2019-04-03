@@ -205,14 +205,17 @@ public class DFS {
         this.metadata = md5("Metadata");
         long guid = md5("" + port);
         chord = new Chord(port, guid);
-        Files.createDirectories(Paths.get(guid + "\\repository"));
-        Files.createDirectories(Paths.get(guid + "\\tmp"));
+//        Files.createDirectories(Paths.get(guid + "\\repository"));
+//        Files.createDirectories(Paths.get(guid + "\\tmp"));
+
+        Files.createDirectories(Paths.get(guid + File.separator+ "repository" + File.separator));
+        Files.createDirectories(Paths.get(guid + File.separator + "tmp" + File.separator));
+
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 chord.leave();
             }
         });
-
     }
 
 
@@ -478,11 +481,12 @@ public class DFS {
         int newPageIndex = 0;
         int fileIndex = 0;
         Long pageGUID = Long.valueOf(0);
+
         for (int i = 0; i < metadata.file.size(); i++) {
             if (metadata.file.get(i).getName().equals(fileName)) {
                 fileIndex = i;
-                metadata.file.get(i).incrementRef();                                            // Increment file refCount
-                writeMetaData(metadata);                                                        // Write updated metadata
+                metadata.file.get(i).incrementRef();                // Increment file refCount
+                writeMetaData(metadata);                            // Write updated metadata
                 newPageIndex = metadata.file.get(i).pages.size();
                 pageGUID = md5(fileName + newPageIndex);
                 metadata.file.get(i).addPage(new PagesJson(pageGUID, (long) data.total), (long) data.total);     // Add new page entry to file and update filesize
