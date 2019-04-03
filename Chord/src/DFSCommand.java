@@ -49,7 +49,7 @@ public class DFSCommand {
                 dfs.head(result[1]);                    // User must specify file name
             }
             if (result[0].equals("append")) {
-                dfs.append(result[1], new RemoteInputFileStream(result[2]));        // User must specify filename they want to append data to and filepath of the data to be appended
+                dfs.append(result[1], new RemoteInputFileStream(result[2]));    // User must specify filename they want to append data to and filepath of the data to be appended
             }
             if (result[0].equals("move")) {
                 dfs.move(result[1], result[2]);         // User must specify file to be edited and its new name
