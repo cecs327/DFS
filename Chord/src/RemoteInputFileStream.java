@@ -39,7 +39,7 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
     protected int fragment = 0;
 
     /**
-     * Connects to the server to provide the file
+     * Connects to the server to provide the fileList
      */
     public void connect()
     {
@@ -67,7 +67,7 @@ public class RemoteInputFileStream extends InputStream implements Serializable {
 
 
     /**
-     * Starts a server to provide the file
+     * Starts a server to provide the fileList
      */
     public  RemoteInputFileStream(String pathName, boolean deleteAfter) throws FileNotFoundException, IOException    {
         File file = new File(pathName);

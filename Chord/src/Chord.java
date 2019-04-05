@@ -107,7 +107,7 @@ public class Chord extends UnicastRemoteObject implements ChordMessageInterface
     }
 
 /**
- *  put a file in the repository
+ *  put a fileList in the repository
   * @param guidObject  GUID of the object to store
   * @param stream  File to store
  */
@@ -179,7 +179,7 @@ public class Chord extends UnicastRemoteObject implements ChordMessageInterface
 
 
 /**
- * deletes a file with guidObject from the repository
+ * deletes a fileList with guidObject from the repository
  * @param guidObject  GUID of the object to delete
  */
     public void delete(long guidObject) throws RemoteException {
@@ -384,7 +384,7 @@ public class Chord extends UnicastRemoteObject implements ChordMessageInterface
                     }
                 }
                 } catch (ArrayIndexOutOfBoundsException e) {
-                //happens sometimes when a new file is added during the loop
+                //happens sometimes when a new fileList is added during the loop
             } catch (IOException e) {
             e.printStackTrace();
         }
@@ -502,7 +502,7 @@ public class Chord extends UnicastRemoteObject implements ChordMessageInterface
                         try{
                             long guidObject = Long.valueOf(file.getName());
                             suc.put(guidObject, new RemoteInputFileStream(file.getPath()));
-                            //file.delete();
+                            //fileList.delete();
                         }
                         catch (Exception   e)
                         {
@@ -510,7 +510,7 @@ public class Chord extends UnicastRemoteObject implements ChordMessageInterface
                         }
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    //happens sometimes when a new file is added during the loop
+                    //happens sometimes when a new fileList is added during the loop
                 }
             }
         }
