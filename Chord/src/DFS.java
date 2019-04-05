@@ -6,6 +6,8 @@ import java.nio.file.*;
 import java.math.BigInteger;
 import java.security.*;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.InputStream;
 
 
@@ -28,7 +30,7 @@ import java.io.InputStream;
       ]
       }
    ]
-} 
+}
 */
 
 
@@ -36,11 +38,12 @@ public class DFS
 {
     Date date = new Date();
     Long metadata;
-    
+
 
     public class PagesJson
     {
         // guid = md5(filename+pagenumber)
+
         Long guid;
         Long size;
 
@@ -58,6 +61,7 @@ public class DFS
             this.referenceCount = 0;
 
             // Set timestamps
+            Date date = new Date();
             this.creationTS = date.getTime();
             this.readTS = date.getTime();
             this.writeTS = date.getTime();
@@ -70,8 +74,8 @@ public class DFS
         public Long getSize(){
             return this.size;
         }
-
         // setters
+
         public void setGUID(Long g){
             this.guid = g;
         }
@@ -82,7 +86,7 @@ public class DFS
 
     };
 
-    public class FileJson 
+    public class FileJson
     {
         String name;
         Long   size;
@@ -97,16 +101,16 @@ public class DFS
         ArrayList<PagesJson> pages;
         public FileJson(String n, Long s)
         {
-         this.name = n;
-         this.size = s;
-         this.numberOfPages = 0;
-         this.referenceCount = 0;
-         pages = new ArrayList<PagesJson>();
+            this.name = n;
+            this.size = s;
+            this.numberOfPages = 0;
+            this.referenceCount = 0;
+            pages = new ArrayList<PagesJson>();
 
-         // Set timestamps
-         this.creationTS = date.getTime();
-         this.readTS = date.getTime();
-         this.writeTS = date.getTime();
+            // Set timestamps
+            this.creationTS = date.getTime();
+            this.readTS = date.getTime();
+            this.writeTS = date.getTime();
         }
         // getters
         public String getName(){
@@ -149,29 +153,29 @@ public class DFS
             this.size+= size;
         }
     };
-    
-    public class FilesJson 
+
+    public class FilesJson
     {
-         List<FileJson> file;
-         public FilesJson() 
-         {
+        List<FileJson> file;
+        public FilesJson()
+        {
             file = new ArrayList<FileJson>();
-         }
+        }
         // getters
         public List<FileJson> getFileList(){
-             return this.file;
+            return this.file;
         }
         // setters
         public void addFile(FileJson f){
-             this.file.add(f);
+            this.file.add(f);
         }
     };
-    
-    
+
+
     int port;
     Chord  chord;
-    
-    
+
+
     private long md5(String objectName)
     {
         try
@@ -184,18 +188,18 @@ public class DFS
         }
         catch(NoSuchAlgorithmException e)
         {
-                e.printStackTrace();
-                
+            e.printStackTrace();
+
         }
         return 0;
     }
-    
-    
-    
+
+
+
     public DFS(int port) throws Exception
     {
-        
-        
+
+
         this.port = port;
         this.metadata = md5("Metadata");
         long guid = md5("" + port);
@@ -207,43 +211,43 @@ public class DFS
                 chord.leave();
             }
         });
-        
+
     }
-    
-  
-/**
- * Join the chord
-  *
- */
+
+
+    /**
+     * Join the chord
+     *
+     */
     public void join(String Ip, int port) throws Exception
     {
         chord.joinRing(Ip, port);
         chord.print();
     }
-    
-    
-   /**
- * leave the chord
-  *
- */ 
+
+
+    /**
+     * leave the chord
+     *
+     */
     public void leave() throws Exception
-    {        
-       chord.leave();
+    {
+        chord.leave();
     }
-  
-   /**
- * print the status of the peer in the chord
-  *
- */
+
+    /**
+     * print the status of the peer in the chord
+     *
+     */
     public void print() throws Exception
     {
         chord.print();
     }
-    
-/**
- * readMetaData read the metadata from the chord
-  *
- */
+
+    /**
+     * readMetaData read the metadata from the chord
+     *
+     */
     public FilesJson readMetaData() throws Exception
     {
         FilesJson filesJson = null;
@@ -259,7 +263,7 @@ public class DFS
             Scanner scan = new Scanner(metadataraw);
             scan.useDelimiter("\\A");
             String strMetaData = scan.next();
-           // System.out.println("Strmetadata: "+strMetaData);
+            // System.out.println("Strmetadata: "+strMetaData);
             filesJson= gson.fromJson(strMetaData, FilesJson.class);
         } catch (NoSuchElementException ex)
         {
@@ -276,17 +280,17 @@ public class DFS
         }
         return filesJson;
     }
-    
-/**
- * writeMetaData write the metadata back to the chord
-  *
- */
+
+    /**
+     * writeMetaData write the metadata back to the chord
+     *
+     */
     public void writeMetaData(FilesJson filesJson) throws Exception
     {
         long guid = md5("Metadata");
         ChordMessageInterface peer = chord.locateSuccessor(guid);
-        
-        Gson gson = new Gson();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         peer.put(guid, gson.toJson(filesJson));
     }
 
@@ -316,11 +320,11 @@ public class DFS
         }
     }
 
-  
-/**
- * List the files in the system
-  *
- */
+
+    /**
+     * List the files in the system
+     *
+     */
     public String lists() throws Exception
     {
         StringBuilder listOfFiles = new StringBuilder("\nFiles:\n");                        // Initialize string to hold file names
@@ -333,11 +337,11 @@ public class DFS
         return listOfFiles.toString();
     }
 
-/**
- * create an empty file 
-  *
- * @param fileName Name of the file
- */
+    /**
+     * create an empty file
+     *
+     * @param fileName Name of the file
+     */
     public void create(String fileName) throws Exception
     {
         // Create new file
@@ -352,12 +356,12 @@ public class DFS
         // Write Metadata
         writeMetaData(metadata);
     }
-    
-/**
- * delete file 
-  *
- * @param fileName Name of the file
- */
+
+    /**
+     * delete file
+     *
+     * @param fileName Name of the file
+     */
     public void delete(String fileName) throws Exception
     {
         // Read Metadata
@@ -386,13 +390,13 @@ public class DFS
         }else return;
 
     }
-    
-/**
- * Read block pageNumber of fileName 
-  *
- * @param fileName Name of the file
- * @param pageNumber number of block. 
- */
+
+    /**
+     * Read block pageNumber of fileName
+     *
+     * @param fileName Name of the file
+     * @param pageNumber number of block.
+     */
     public RemoteInputFileStream read(String fileName, int pageNumber) throws Exception
     {
         // Read Metadata
@@ -407,8 +411,8 @@ public class DFS
                 fileIndex = i;
                 metadata.file.get(i).incrementRef(pageNumber);                              // Increment file and page refCount
                 myFile = metadata.file.get(i);
-                metadata.file.get(i).readTS = date.getTime();                               // Update file read timestamp
-                metadata.file.get(i).pages.get(pageNumber).readTS = date.getTime();         // Update page read timestamp
+                metadata.file.get(i).readTS = new Date().getTime();                               // Update file read timestamp
+                metadata.file.get(i).pages.get(pageNumber).readTS = new Date().getTime();         // Update page read timestamp
                 writeMetaData(metadata);                                                    // Update metadata with refCount and timestamps
                 find = true;
                 break;
@@ -456,8 +460,8 @@ public class DFS
                 fileIndex = i;
                 myFile = metadata.file.get(i);
                 tailPage = myFile.pages.size()-1;
-                metadata.file.get(i).readTS = date.getTime();                               // Update file read timestamp
-                metadata.file.get(i).pages.get(tailPage).guid = date.getTime();             // Update page read timestamp
+                metadata.file.get(i).readTS = new Date().getTime();                               // Update file read timestamp
+                metadata.file.get(i).pages.get(tailPage).guid = new Date().getTime();             // Update page read timestamp
                 metadata.file.get(i).incrementRef(tailPage);                                // Increment file and page referenceCount
                 writeMetaData(metadata);                                                    // Update metadata with new RefCount and timestamps
                 find = true;
@@ -473,47 +477,112 @@ public class DFS
             return chord.get(myPage.guid);
         }else return null;
     }
-    
- /**
- * Add a page to the file                
-  *
- * @param fileName Name of the file
- * @param data RemoteInputStream. 
- */
-    public void append(String fileName, RemoteInputFileStream data) throws Exception
-    {
-        // Read Metadata
+
+//    /**
+//     * Add a page to the file
+//     *
+//     * @param fileName Name of the file
+//     * @param data RemoteInputStream.
+//     */
+//    public void append(String fileName, RemoteInputFileStream data) throws Exception
+//    {
+//        // Read Metadata
+//        FilesJson metadata = readMetaData();
+//
+//        // Find file
+//        boolean find = false;
+//        int newPageIndex = 0;
+//        int fileIndex = 0;
+//        Long pageGUID = Long.valueOf(0);
+//        for(int i = 0; i < metadata.file.size(); i++){
+//            if(metadata.file.get(i).getName().equals(fileName)){
+//                fileIndex = i;
+//                metadata.file.get(i).incrementRef();                                            // Increment file refCount
+//                writeMetaData(metadata);                                                        // Write updated metadata
+//                newPageIndex = metadata.file.get(i).pages.size();
+//                pageGUID = md5(fileName+newPageIndex);
+//                metadata.file.get(i).addPage(new PagesJson(pageGUID, (long) data.total), (long) data.total);     // Add new page entry to file and update filesize
+//                metadata.file.get(i).writeTS = new Date().getTime();              // Update file write timestamp
+//                find = true;
+//                break;
+//            }
+//        }
+//
+//        // If file was found append data and add to chord, else return
+//        if(find){
+//            //Find closest successor node and place data
+//            metadata.file.get(fileIndex).decrementRef();                                    // Decrement refcount
+//            ChordMessageInterface peer = chord.locateSuccessor(pageGUID);
+//            writeMetaData(metadata);                                                        // Update metadata for write and refCount
+//            peer.put(pageGUID, data);
+//        }else return;
+
+    public void append(String filename, RemoteInputFileStream data) throws Exception {
         FilesJson metadata = readMetaData();
 
-        // Find file
-        boolean find = false;
-        int newPageIndex = 0;
-        int fileIndex = 0;
-        Long pageGUID = Long.valueOf(0);
-        for(int i = 0; i < metadata.file.size(); i++){
-            if(metadata.file.get(i).getName().equals(fileName)){
-                fileIndex = i;
-                metadata.file.get(i).incrementRef();                                            // Increment file refCount
-                writeMetaData(metadata);                                                        // Write updated metadata
-                newPageIndex = metadata.file.get(i).pages.size();
-                pageGUID = md5(fileName+newPageIndex);
-                metadata.file.get(i).addPage(new PagesJson(pageGUID, (long) data.total), (long) data.total);     // Add new page entry to file and update filesize
-                metadata.file.get(i).writeTS = date.getTime();              // Update file write timestamp
-                find = true;
-                break;
+        FileJson target = find(metadata.getFileList(), filename);
+        if (target != null) {
+            long timestamp = new Date().getTime();
+            long pageGUID = md5(filename + timestamp);
+            PagesJson page = new PagesJson(pageGUID, (long)data.total);
+
+            target.writeTS = timestamp;                 // Update write timestamp
+            target.addPage(page, (long)data.total);     // Add a new page to the file
+            target.incrementRef();
+
+            ChordMessageInterface peer = chord.locateSuccessor(pageGUID);
+            peer.put(pageGUID, data);                   // Store the file on the Chord
+
+            writeMetaData(metadata);
+        }
+        else {
+            System.out.println("File '" + filename + "' not found.");
+        }
+    }
+
+    /**
+     * Appends a string marked by single quotes (') as a page to the target file
+     * @param filename The file to add a page to.
+     * @param text The text to append.
+     * @throws Exception
+     */
+    public void append(String filename, String text) throws Exception {
+        FilesJson metadata = readMetaData();
+
+        FileJson target = find(metadata.getFileList(), filename);
+        if (target != null) {
+            long timestamp = new Date().getTime();
+            long pageGUID = md5(filename + timestamp);
+            long text_len = (long)text.getBytes("UTF-8").length;
+
+            PagesJson page = new PagesJson(pageGUID, text_len);
+
+            target.writeTS = timestamp;                 // Update write timestamp
+            target.addPage(page, text_len);     // Add a new page to the file
+            target.incrementRef();
+
+            ChordMessageInterface peer = chord.locateSuccessor(pageGUID);
+            peer.put(pageGUID, text);                   // Store the file on the Chord
+
+            writeMetaData(metadata);
+        }
+        else {
+            System.out.println("File '" + filename + "' not found.");
+        }
+    }
+
+    /**
+     * Helper method to find a filename in the Metadata.
+     * @param collection Metadata's file list
+     * @param filename The file filename
+     * @return
+     */
+    private FileJson find(List<FileJson> collection, String filename) {
+        for (var item : collection) {
+            if (item.name.equals(filename)) {
+                return item;
             }
         }
-
-        // If file was found append data and add to chord, else return
-        if(find){
-            //Find closest successor node and place data
-            metadata.file.get(fileIndex).decrementRef();                                    // Decrement refcount
-            ChordMessageInterface peer = chord.locateSuccessor(pageGUID);
-            writeMetaData(metadata);                                                        // Update metadata for write and refCount
-            peer.put(pageGUID, data);
-        }else return;
+        return null;
     }
-    
 }
-
-
